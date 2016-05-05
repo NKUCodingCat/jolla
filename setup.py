@@ -15,7 +15,8 @@ setup(
     download_url='https://github.com/salamer/jolla',
 
     install_requires=[
-        'gevent'
+        'gevent',
+        'werkzeug'
     ],
 
     packages=['jolla'],

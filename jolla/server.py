@@ -94,16 +94,16 @@ class WebApp():
 
             self.request['data'] = {}
             self.request['query_string'] = {}
-
+            # Beyond Comp
             line = self._environ['QUERY_STRING']
-            request_data = environ['wsgi.input'].read()
+            request_data = environ['wsgi.input'].read(environ.get('content_length', 0))
             if request_data:
                 request_data = unquote(request_data)
                 for data_pair in request_data.split('&'):
                     key, value = data_pair.split('=')
 
                     self.request['data'][key] = value
-
+            # up
             query_string = self._environ['QUERY_STRING']
             if query_string:
                 query_string = unquote(query_string)
@@ -114,7 +114,7 @@ class WebApp():
                         self.request['query_string'][key] = value
                     except ValueError:
                         pass
-
+        # Below Comp
         if not get_urls:
             for url in self.urls:
                 try:
@@ -232,7 +232,13 @@ class jolla_server(WSGIServer):
 
         return html_code[0]
 
-    def run_server(self):
+    def run_server(self, reload = False):
         print "the server is running on the {} in the port {}".format(self.host, self.port)
-
-        self.serve_forever()
+        if reload:
+            from werkzeug.serving import run_simple
+            run_simple(self.host, self.port, self, use_debugger=True, use_reloader=True)
+        else:
+            self.serve_forever()
+    
+    def __call__(self, environ, start_response):
+        return self.application(environ, start_response)

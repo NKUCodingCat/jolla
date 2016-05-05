@@ -65,4 +65,4 @@ class app(server.WebApp):
 
 if __name__ == '__main__':
     server = server.jolla_server(app)
-    server.run_server()
+    server.run_server(reload = True)
